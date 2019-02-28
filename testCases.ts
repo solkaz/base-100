@@ -257,13 +257,4 @@ const emojiCharsInBytes: number[][] = [
   [240, 159, 147, 182],
 ];
 
-interface Base100EncodeTestCase extends Array<unknown> {
-  0: number; // Value to be encoded; Min values is 0, Max is emojiCharsInBytes.length()
-  1: number[]; // Expected emoji character; obtained using Buffer.from(bytes).toString()
-}
-
-const encodingTestCases = emojiCharsInBytes.map(
-  (emojiBytes, index): Base100EncodeTestCase => [index, emojiBytes]
-);
-
-export { encodingTestCases };
+export { emojiCharsInBytes };

@@ -1,29 +1,44 @@
 import { decode, encode } from "./index";
 
-import { encodingTestCases } from "./testCases";
+import { emojiCharsInBytes as testSet } from "./testCases";
 
-describe("base-100", () => {
-  test("encoding a single byte", () => {
-    encodingTestCases.forEach(([inputByte, emojiBytes]) => {
-      const expectedEmoji = Buffer.from(emojiBytes).toString();
-      expect(encode([inputByte])).toEqual(expectedEmoji);
+describe("base-100 functions", () => {
+  describe("encode", () => {
+    test("encoding a single byte", () => {
+      testSet.forEach((emojiBytes, inputByte) => {
+        const expectedEmoji = Buffer.from(emojiBytes).toString();
+        expect(encode([inputByte])).toEqual(expectedEmoji);
+      });
+    });
+
+    test("encoding a series of bytes", () => {
+      const [input, expected] = testSet.reduce(
+        ([accInput, accExpected], bytes, index) => [
+          accInput.concat(index),
+          accExpected.concat(bytes),
+        ],
+        [[], []]
+      );
+      expect(encode(input)).toEqual(Buffer.from(expected).toString());
     });
   });
 
-  test("encoding a series of bytes", () => {
-    const [input, expected] = encodingTestCases.reduce(
-      ([accInput, accExpected], [index, bytes]) => [
-        accInput.concat(index),
-        accExpected.concat(bytes),
-      ],
-      [[], []]
-    );
-    expect(encode(input)).toEqual(Buffer.from(expected).toString());
-  });
-
   describe("decode", () => {
-    test.skip("decodes classic example", () => {
-      expect(decode(Buffer.from([240, 159, 143, 183]).toString())).toBe("");
+    test("decoding a single char", () => {
+      testSet.forEach((emojiBytes, inputByte) => {
+        expect(decode(Buffer.from(emojiBytes).toString())).toEqual([inputByte]);
+      });
+    });
+
+    test("decoding a multi-char string", () => {
+      const [emojiBytes, decodedBytes] = testSet.reduce(
+        ([accEmojiBytes, accDecodedBytes], bytes, index) => [
+          accEmojiBytes.concat(bytes),
+          accDecodedBytes.concat(index),
+        ],
+        [[], []]
+      );
+      expect(decode(Buffer.from(emojiBytes).toString())).toEqual(decodedBytes);
     });
   });
 });

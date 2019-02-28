@@ -1,5 +1,20 @@
-export function decode(s: string): string {
-  return "";
+export function decode(s: string): number[] {
+  return Buffer.from(s)
+    .reduce(
+      (chunks, byte) => {
+        const currentChunk = chunks[chunks.length - 1];
+        if (currentChunk.length === 4) {
+          chunks.push([byte]);
+        } else {
+          currentChunk.push(byte);
+        }
+        return chunks;
+      },
+      [[]] as number[][]
+    )
+    .map((chunk) => {
+      return ((chunk[2] - 143) << 6) + chunk[3] - 128 - 55;
+    });
 }
 
 export function encode(bytes: number[]): string {
