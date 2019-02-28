@@ -41,4 +41,19 @@ describe("base-100 functions", () => {
       expect(decode(Buffer.from(emojiBytes).toString())).toEqual(decodedBytes);
     });
   });
+
+  describe("Integration tests", () => {
+    test("emoji -> decode -> encode -> emoji", () => {
+      testSet.forEach((emojiBytes) => {
+        const emojiString = Buffer.from(emojiBytes).toString();
+        expect(encode(decode(emojiString))).toEqual(emojiString);
+      });
+    });
+
+    test("byte -> encode -> decode -> byte", () => {
+      testSet.forEach((_, index) => {
+        expect(decode(encode([index]))).toEqual([index]);
+      });
+    });
+  });
 });
