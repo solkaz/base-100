@@ -12,14 +12,12 @@ export function decode(s: string): number[] {
       },
       [[]] as number[][]
     )
-    .map((chunk) => {
-      return ((chunk[2] - 143) << 6) + chunk[3] - 128 - 55;
-    });
+    .map((chunk) => ((chunk[2] - 143) << 6) + chunk[3] - 128 - 55);
 }
 
 export function encode(bytes: number[]): string {
   const bytesLength = bytes.length;
-  const writeBuf = Array(bytesLength * 4);
+  const writeBuf = new Array(bytesLength * 4);
   for (let index = 0; index < bytesLength; index++) {
     const byte = bytes[index];
     writeBuf[4 * index + 0] = 0xf0;
